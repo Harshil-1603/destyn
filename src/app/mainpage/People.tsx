@@ -8,6 +8,7 @@ type User = {
   email: string;
   answers: Record<string, string>;
   profilePhoto?: string;
+  profilePhotos?: string[];
 };
 
 export default function People() {
@@ -139,14 +140,20 @@ export default function People() {
             overflow: "hidden",
           }}
         >
-display: "flex",          {user.profilePhoto ? (
+          {/* Fixed photo display logic */}
+          {(user.profilePhotos && user.profilePhotos.length > 0) || user.profilePhoto ? (
             <img
-              src={user.profilePhoto}
+              src={user.profilePhotos?.[0] || user.profilePhoto}
               alt={`${user.name}'s profile`}
               style={{
                 width: "100%",
                 height: "100%",
                 objectFit: "cover",
+              }}
+              onError={(e) => {
+                console.error("Error loading image:", e);
+                // Fallback to default icon if image fails to load
+                (e.target as HTMLImageElement).style.display = 'none';
               }}
             />
           ) : (
