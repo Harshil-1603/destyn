@@ -11,26 +11,58 @@ type User = {
   profilePhotos?: string[];
 };
 
+const QUESTION_LABELS = {
+  "q1": "Activities together",
+  "q2": "Comfort activity",
+  "q3": "Reading preference",
+  "q4": "Response to compliments",
+  "q5": "Music vibe",
+  "q6": "Relationship experience",
+  "q7": "Snack preference",
+  "q8": "Food vibe",
+  "q9": "Personality",
+  "q10": "Attracted to",
+  "q11": "When liking someone",
+  "q12": "Personal space",
+  "q13": "Relationship vibe",
+  "q14": "Showing interest"
+};
+
 export default function People() {
   const { data: session } = useSession();
   const [users, setUsers] = useState<User[]>([]);
   const [current, setCurrent] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [likedUsers, setLikedUsers] = useState<string[]>([]);
 
   useEffect(() => {
     if (!session?.user?.email) return;
     setLoading(true);
-    fetch("/api/get-users", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: session.user.email }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setUsers(data.users || []);
-        setCurrent(0);
-        setLoading(false);
-      });
+    
+    // Fetch users and liked users simultaneously
+    Promise.all([
+      fetch("/api/get-users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: session.user.email }),
+      }).then(res => res.json()),
+      fetch("/api/get-liked-users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: session.user.email }),
+      }).then(res => res.json())
+    ]).then(([usersData, likedData]) => {
+      const allUsers = usersData.users || [];
+      const liked = likedData.liked || [];
+      
+      // Filter out already liked users
+      const availableUsers = allUsers.filter((user: User) => !liked.includes(user.email));
+      
+      setUsers(availableUsers);
+      setLikedUsers(liked);
+      setCurrent(0);
+      setLoading(false);
+    });
   }, [session?.user?.email]);
 
   if (loading)
@@ -73,6 +105,28 @@ export default function People() {
       </div>
     );
   }
+
+  const handleLike = async () => {
+    await fetch("/api/like-user", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        currentUserEmail: session?.user?.email,
+        likedUserEmail: user.email,
+      }),
+    });
+    
+    // Remove this user from the list and move to next
+    setUsers(prev => prev.filter((_, index) => index !== current));
+    if (current >= users.length - 1) {
+      setCurrent(0);
+    }
+  };
+
+  const handlePass = () => {
+    // Just move to next user without liking
+    setCurrent((prev) => (prev + 1) % users.length);
+  };
 
   return (
     <div
@@ -140,7 +194,6 @@ export default function People() {
             overflow: "hidden",
           }}
         >
-          {/* Fixed photo display logic */}
           {(user.profilePhotos && user.profilePhotos.length > 0) || user.profilePhoto ? (
             <img
               src={user.profilePhotos?.[0] || user.profilePhoto}
@@ -152,7 +205,6 @@ export default function People() {
               }}
               onError={(e) => {
                 console.error("Error loading image:", e);
-                // Fallback to default icon if image fails to load
                 (e.target as HTMLImageElement).style.display = 'none';
               }}
             />
@@ -160,6 +212,7 @@ export default function People() {
             <span>👤</span>
           )}
         </div>
+        
         <h3
           style={{
             fontSize: "24px",
@@ -188,6 +241,8 @@ export default function People() {
             borderRadius: 12,
             padding: 20,
             border: "1px solid #333",
+            maxHeight: "300px",
+            overflowY: "auto"
           }}
         >
           <h4
@@ -220,12 +275,13 @@ export default function People() {
                       marginBottom: 4,
                     }}
                   >
-                    {qid}
+                    {QUESTION_LABELS[qid as keyof typeof QUESTION_LABELS] || qid}
                   </div>
                   <div
                     style={{
                       color: "#fff",
                       fontSize: "14px",
+                      lineHeight: "1.4"
                     }}
                   >
                     {ans}
@@ -259,17 +315,7 @@ export default function People() {
           onMouseLeave={(e) =>
             ((e.target as HTMLButtonElement).style.background = "#4caf50")
           }
-          onClick={async () => {
-            await fetch("/api/like-user", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                currentUserEmail: session?.user?.email,
-                likedUserEmail: user.email,
-              }),
-            });
-            setCurrent((prev) => (prev + 1) % users.length);
-          }}
+          onClick={handleLike}
         >
           ❤️ Like
         </button>
@@ -293,7 +339,7 @@ export default function People() {
           onMouseLeave={(e) =>
             ((e.target as HTMLButtonElement).style.background = "#f44336")
           }
-          onClick={() => setCurrent((prev) => (prev + 1) % users.length)}
+          onClick={handlePass}
         >
           ✖️ Pass
         </button>
