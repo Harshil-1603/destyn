@@ -469,7 +469,7 @@ export default function People() {
             flexWrap: "wrap",
           }}
         >
-          {(user.profilePhotos || [user.profilePhoto])
+          {(user.profilePhotos || [''])
             .slice(0, 3)
             .map((photo, idx) => (
               <div
@@ -655,8 +655,8 @@ export default function People() {
             cursor: "pointer",
             transition: "all 0.2s",
           }}
-          onMouseEnter={(e) => (e.target.style.background = "#d32f2f")}
-          onMouseLeave={(e) => (e.target.style.background = "#f44336")}
+          onMouseEnter={(e) => ((e.target as HTMLElement).style.background = "#d32f2f")}
+          onMouseLeave={(e) => ((e.target as HTMLElement).style.background = "#f44336")}
           onClick={handlePass}
         >
           ✖️ Pass
@@ -675,8 +675,8 @@ export default function People() {
             cursor: "pointer",
             transition: "all 0.2s",
           }}
-          onMouseEnter={(e) => (e.target.style.background = "#45a049")}
-          onMouseLeave={(e) => (e.target.style.background = "#4caf50")}
+          onMouseEnter={(e) => ((e.target as HTMLElement).style.background = "#45a049")}
+          onMouseLeave={(e) => ((e.target as HTMLElement).style.background = "#4caf50")}
           onClick={handleLike}
         >
           ❤️ Like

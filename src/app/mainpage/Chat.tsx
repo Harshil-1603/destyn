@@ -548,7 +548,7 @@ export default function Chat() {
                                 border: "1px solid rgba(255,255,255,0.1)",
                               }}
                             >
-                              {reaction} {count}
+                              {reaction} {String(count)}
                             </span>
                           )
                         )}
@@ -598,13 +598,13 @@ export default function Chat() {
                               height: "28px",
                             }}
                             onMouseEnter={(e) => {
-                              e.target.style.background =
+                              (e.target as HTMLButtonElement).style.background =
                                 "rgba(255,255,255,0.1)";
-                              e.target.style.transform = "scale(1.1)";
+                              (e.target as HTMLButtonElement).style.transform = "scale(1.1)";
                             }}
                             onMouseLeave={(e) => {
-                              e.target.style.background = "transparent";
-                              e.target.style.transform = "scale(1)";
+                              (e.target as HTMLButtonElement).style.background = "transparent";
+                              (e.target as HTMLButtonElement).style.transform = "scale(1)";
                             }}
                           >
                             {reaction}
@@ -798,8 +798,8 @@ export default function Chat() {
                     transition: "background 0.2s",
                   }}
                   onClick={sendMessage}
-                  onMouseEnter={(e) => (e.target.style.background = "#0056b3")}
-                  onMouseLeave={(e) => (e.target.style.background = "#0070f3")}
+                  onMouseEnter={(e) => ((e.target as HTMLButtonElement).style.background = "#0056b3")}
+                  onMouseLeave={(e) => ((e.target as HTMLButtonElement).style.background = "#0070f3")}
                 >
                   Send
                 </button>

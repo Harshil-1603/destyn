@@ -14,8 +14,10 @@ export async function POST(req: NextRequest) {
 
     // Build query
     const query: any = {
-      email: { $ne: email },
-      email: { $nin: blockedUsers }, // Exclude blocked users
+      email: { 
+        $ne: email,
+        $nin: blockedUsers
+      },
     };
 
     if (ageRange && ageRange.length === 2) {
