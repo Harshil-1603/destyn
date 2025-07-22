@@ -165,7 +165,7 @@ export default function LoginPage() {
               className="w-48 md:w-64 lg:w-72 object-contain"
             />
             <p className="text-xl md:text-2xl font-light tracking-widest">
-              tagline
+              Dil se Date tak...
             </p>
           </div>
         </div>
