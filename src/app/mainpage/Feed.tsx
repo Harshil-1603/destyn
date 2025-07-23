@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
+import BlockConfirmModal from "./BlockConfirmModal";
+import ReportModal from "./ReportModal";
 
 interface Confession {
   _id: string;
@@ -24,11 +26,30 @@ export default function Feed() {
   const [commentText, setCommentText] = useState("");
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [blockModalOpen, setBlockModalOpen] = useState(false);
+  const [reportModalOpen, setReportModalOpen] = useState(false);
+  const [blockTarget, setBlockTarget] = useState<string | null>(null);
+  const [reportTarget, setReportTarget] = useState<string | null>(null);
+  const [blockedUsers, setBlockedUsers] = useState<string[]>([]);
 
   // Fetch confessions on mount
   useEffect(() => {
     fetchConfessions();
   }, []);
+
+  // Fetch blocked users on mount
+  useEffect(() => {
+    if (!session?.user?.email) return;
+    fetch("/api/block-user", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ blockerEmail: session.user.email, action: "get" }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setBlockedUsers(data.blocked || []);
+      });
+  }, [session?.user?.email]);
 
   const fetchConfessions = async () => {
     try {
@@ -214,7 +235,7 @@ export default function Feed() {
             </div>
           </div>
         ) : (
-          confessions.map((confession) => (
+          confessions.filter(c => !blockedUsers.includes(c.userEmail)).map((confession) => (
             <div
               key={confession._id}
               style={{
@@ -292,6 +313,14 @@ export default function Feed() {
                     <span role="img" aria-label="comments">💬</span>
                     {confession.comments.length}
                   </span>
+                  <div style={{ display: "flex", gap: 8 }}>
+                    <button
+                      style={{ background: "#ff9800", color: "#fff", border: "none", borderRadius: 6, padding: "4px 10px", fontWeight: 600, cursor: "pointer", fontSize: 12 }}
+                      onClick={() => { setReportTarget(confession._id); setReportModalOpen(true); }}
+                    >
+                      Report
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -469,6 +498,22 @@ export default function Feed() {
           ))
         )}
       </div>
+      <ReportModal
+        open={reportModalOpen}
+        onClose={() => setReportModalOpen(false)}
+        onSubmit={async (reason, details) => {
+          setReportModalOpen(false);
+          if (!session?.user?.email || !reportTarget) return;
+          await fetch("/api/report", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ reporterEmail: session.user.email, confessionId: reportTarget, reason, details }),
+          });
+          alert("Report submitted. Thank you!");
+        }}
+        type="confession"
+        targetId={reportTarget || ""}
+      />
     </div>
   );
 }
