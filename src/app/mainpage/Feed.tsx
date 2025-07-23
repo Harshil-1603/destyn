@@ -499,6 +499,9 @@ export default function Feed() {
                   border: "1px solid #333",
                   boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
                   position: "relative",
+                  width: "100%", // Ensure full width
+                  boxSizing: "border-box", // Include padding in width calculation
+                  overflow: "hidden", // Prevent horizontal overflow
                 }}
               >
                 {/* Vibrant gradient accent */}
@@ -516,13 +519,18 @@ export default function Feed() {
                 />
 
                 {/* Confession Content */}
-                <div style={{ marginBottom: 16 }}>
+                <div style={{ marginBottom: 16, width: "100%" }}>
                   <p
+                    className="gossip-text"
                     style={{
                       color: "#fff",
                       fontSize: "16px",
                       lineHeight: 1.6,
                       margin: "0 0 12px 0",
+                      wordWrap: "break-word", // Allow breaking long words
+                      overflowWrap: "break-word", // Ensure text wraps
+                      whiteSpace: "pre-wrap", // Preserve whitespace but wrap text
+                      maxWidth: "100%", // Restrict to container width
                     }}
                   >
                     {confession.confession}
