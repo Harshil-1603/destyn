@@ -557,7 +557,13 @@ export default function Feed() {
                   </div>
                 </div>
                 {/* Reactions Row */}
-                <div style={{ display: "flex", gap: 10, margin: "10px 0 0 0" }}>
+                <div style={{ 
+                  display: "flex", 
+                  gap: 10, 
+                  margin: "10px 0 16px 0", // Increased bottom margin
+                  flexWrap: "wrap", // Allow wrapping on smaller screens
+                  width: "100%"
+                }}>
                   {REACTIONS.map((emoji) => {
                     const users = reactions[emoji] || [];
                     const hasReacted = session?.user?.email && users.includes(session.user.email);
