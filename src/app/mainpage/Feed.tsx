@@ -113,106 +113,81 @@ export default function Feed() {
         maxWidth: 800,
         margin: "0 auto",
         padding: "20px",
-        background: "#000",
+        background: "transparent", // Changed from gradient to transparent
+        minHeight: "calc(100vh - 40px)",
+        borderRadius: "16px",
+        // Removed box shadow for cleaner transparent look
       }}
     >
-      {/* Header */}
+      {/* Minimal Confession Input */}
       <div
         style={{
-          textAlign: "center",
-          marginBottom: 30,
-          padding: "20px 0",
-        }}
-      >
-        <h1
-          style={{
-            fontSize: "32px",
-            fontWeight: "700",
-            color: "#fff",
-            margin: "0 0 8px 0",
-          }}
-        >
-          💭 Anonymous Confessions
-        </h1>
-        <p
-          style={{
-            color: "#888",
-            fontSize: "16px",
-            margin: 0,
-          }}
-        >
-          Share your thoughts anonymously, comment with your identity
-        </p>
-      </div>
-
-      {/* Create Confession */}
-      <div
-        style={{
-          background: "#111",
-          borderRadius: 16,
-          padding: 24,
+          position: "relative",
           marginBottom: 24,
-          border: "1px solid #333",
         }}
       >
-        <h3
-          style={{
-            color: "#fff",
-            margin: "0 0 16px 0",
-            fontSize: "18px",
-            fontWeight: "600",
-          }}
-        >
-          Share Your Confession
-        </h3>
         <textarea
           style={{
             width: "100%",
-            minHeight: 100,
-            padding: 16,
-            borderRadius: 12,
-            border: "1px solid #333",
-            background: "#0a0a0a",
+            minHeight: 48,
+            height: newConfession.length > 50 ? "auto" : "48px",
+            padding: "12px 100px 12px 16px",
+            borderRadius: 24,
+            border: "1px solid rgba(51, 51, 51, 0.7)",
+            background: "rgba(17, 17, 17, 0.7)",
+            backdropFilter: "blur(10px)",
             color: "#fff",
             fontSize: "14px",
-            resize: "vertical",
+            resize: "none",
             outline: "none",
             fontFamily: "inherit",
+            overflow: newConfession.length > 50 ? "auto" : "hidden",
+            transition: "height 0.2s ease",
           }}
           value={newConfession}
           onChange={(e) => setNewConfession(e.target.value)}
-          placeholder="Share your anonymous confession here..."
+          placeholder="Tell us a gossip..."
           maxLength={500}
+          rows={newConfession.length > 50 ? 3 : 1}
         />
-        <div
+        <button
           style={{
+            position: "absolute",
+            top: "50%",
+            transform: "translateY(-50%)",
+            right: "12px",
+            width: "32px",
+            height: "32px",
+            borderRadius: "50%",
+            background: "#667eea",
+            color: "white",
+            border: "none",
+            cursor: "pointer",
+            opacity: loading ? 0.6 : 1,
+            transition: "all 0.2s",
             display: "flex",
-            justifyContent: "space-between",
+            justifyContent: "center",
             alignItems: "center",
-            marginTop: 12,
+            padding: 0,
           }}
+          onClick={handleSubmitConfession}
+          disabled={loading || !newConfession.trim()}
         >
-          <span style={{ color: "#666", fontSize: "12px" }}>
-            {newConfession.length}/500 characters
-          </span>
-          <button
-            style={{
-              padding: "12px 24px",
-              borderRadius: 8,
-              background: "#0070f3",
-              color: "white",
-              border: "none",
-              cursor: "pointer",
-              fontWeight: "600",
-              opacity: loading ? 0.6 : 1,
-              transition: "all 0.2s",
-            }}
-            onClick={handleSubmitConfession}
-            disabled={loading || !newConfession.trim()}
-          >
-            {loading ? "Posting..." : "Post Confession"}
-          </button>
-        </div>
+          {loading ? (
+            <span style={{ fontSize: "12px" }}>...</span>
+          ) : (
+            <div
+              style={{
+                width: 0,
+                height: 0,
+                borderTop: "6px solid transparent",
+                borderBottom: "6px solid transparent",
+                borderLeft: "10px solid white",
+                marginLeft: "3px",
+              }}
+            />
+          )}
+        </button>
       </div>
 
       {/* Confessions Feed */}
@@ -243,45 +218,88 @@ export default function Feed() {
             <div
               key={confession._id}
               style={{
-                background: "#111",
+                background: "rgba(17, 17, 17, 0.7)",
+                backdropFilter: "blur(10px)",
                 borderRadius: 16,
                 padding: 24,
-                border: "1px solid #333",
+                border: "1px solid rgba(102, 126, 234, 0.4)",
+                boxShadow: "0 4px 20px rgba(0, 0, 0, 0.2)",
+                position: "relative",
+                overflow: "hidden",
               }}
             >
+              {/* Vibrant gradient accent */}
+              <div
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  width: "100%",
+                  height: "4px",
+                  background: "linear-gradient(90deg, #667eea, #764ba2, #fc5c7d)",
+                  backgroundSize: "200% 100%",
+                  animation: "gradientMove 3s ease infinite",
+                }}
+              />
+
               {/* Confession Content */}
-              <div style={{ marginBottom: 16 }}>
+              <div style={{ marginBottom: 16, position: "relative" }}>
                 <p
                   style={{
                     color: "#fff",
-                    fontSize: "16px",
+                    fontSize: "18px",
                     lineHeight: 1.6,
-                    margin: "0 0 12px 0",
+                    margin: "0 0 24px 0",
+                    fontWeight: "500",
+                    letterSpacing: "0.3px",
                   }}
                 >
                   {confession.confession}
                 </p>
+
+                {/* Move time and comment count to bottom right */}
                 <div
                   style={{
                     display: "flex",
-                    justifyContent: "space-between",
+                    justifyContent: "flex-end",
                     alignItems: "center",
+                    gap: "12px",
                   }}
                 >
-                  <span style={{ color: "#666", fontSize: "12px" }}>
-                    Anonymous • {formatTime(confession.createdAt)}
+                  <span
+                    style={{
+                      color: "rgba(255, 255, 255, 0.6)",
+                      fontSize: "12px",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "4px",
+                    }}
+                  >
+                    <span role="img" aria-label="time">
+                      ⏱️
+                    </span>
+                    {formatTime(confession.createdAt)}
                   </span>
-                  <span style={{ color: "#666", fontSize: "12px" }}>
-                    {confession.comments.length} comments
+                  <span
+                    style={{
+                      color: "rgba(255, 255, 255, 0.6)",
+                      fontSize: "12px",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "4px",
+                    }}
+                  >
+                    <span role="img" aria-label="comments">💬</span>
+                    {confession.comments.length}
                   </span>
                 </div>
               </div>
 
-              {/* Comments Section */}
+              {/* Comments Section - keep the existing code but update styling */}
               {confession.comments.length > 0 && (
                 <div
                   style={{
-                    borderTop: "1px solid #333",
+                    borderTop: "1px solid rgba(255, 255, 255, 0.1)",
                     paddingTop: 16,
                     marginBottom: 16,
                   }}
@@ -307,10 +325,11 @@ export default function Feed() {
                       <div
                         key={comment.id}
                         style={{
-                          background: "#0a0a0a",
-                          borderRadius: 8,
+                          background: "rgba(10, 10, 10, 0.6)",
+                          borderRadius: 12,
                           padding: 12,
-                          border: "1px solid #333",
+                          border: "1px solid rgba(102, 126, 234, 0.2)",
+                          backdropFilter: "blur(5px)",
                         }}
                       >
                         <div
@@ -323,14 +342,19 @@ export default function Feed() {
                         >
                           <span
                             style={{
-                              color: "#0070f3",
+                              color: "#667eea",
                               fontSize: "12px",
                               fontWeight: "600",
                             }}
                           >
                             {comment.userName}
                           </span>
-                          <span style={{ color: "#666", fontSize: "10px" }}>
+                          <span
+                            style={{
+                              color: "rgba(255, 255, 255, 0.4)",
+                              fontSize: "10px",
+                            }}
+                          >
                             {formatTime(comment.createdAt)}
                           </span>
                         </div>
@@ -350,7 +374,7 @@ export default function Feed() {
                 </div>
               )}
 
-              {/* Add Comment */}
+              {/* Add Comment button - update styling for more vibrant look */}
               {replyingTo === confession._id ? (
                 <div
                   style={{
@@ -424,17 +448,21 @@ export default function Feed() {
                 <button
                   style={{
                     padding: "8px 16px",
-                    borderRadius: 6,
-                    background: "transparent",
-                    color: "#0070f3",
-                    border: "1px solid #0070f3",
+                    borderRadius: 8,
+                    background: "rgba(102, 126, 234, 0.2)",
+                    color: "#fff",
+                    border: "1px solid rgba(102, 126, 234, 0.4)",
                     cursor: "pointer",
                     fontSize: "12px",
                     fontWeight: "600",
+                    transition: "all 0.2s",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "6px",
                   }}
                   onClick={() => setReplyingTo(confession._id)}
                 >
-                  💬 Add Comment
+                  <span role="img" aria-label="comment">💬</span> Add Comment
                 </button>
               )}
             </div>

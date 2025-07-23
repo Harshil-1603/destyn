@@ -109,7 +109,7 @@ export default function MainPage() {
         height: "100vh",
         display: "flex",
         flexDirection: "column",
-        background: "#000",
+        background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
         color: "#fff",
         overflow: "hidden",
       }}
