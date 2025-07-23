@@ -17,10 +17,11 @@ const NAV_OPTIONS = [
 
 // Different options for the top navbar
 const TOP_NAV_OPTIONS = [
-  { key: "search", label: "Search" },
-  { key: "notifications", label: "Notifications" },
-  { key: "settings", label: "Settings" },
-  { key: "help", label: "Help" },
+  { key: "Guidelines", label: "Guidelines" },
+  { key: "FAQs", label: "FAQs" },
+  { key: "Privacy", label: "Privacy" },
+  { key: "About Us", label: "About Us" },
+    { key: "Feedback", label: "Feedback" },
 ];
 
 export default function MainPage() {
