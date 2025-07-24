@@ -100,9 +100,11 @@ export default function People() {
       const liked = likedData.liked || [];
       
       // Filter out already liked users and current user
-      const availableUsers = allUsers.filter((user: User) => 
+      let availableUsers = allUsers.filter((user: User) => 
         !liked.includes(user.email) && user.email !== session.user.email
       );
+      // Shuffle the available users array
+      availableUsers = shuffleArray(availableUsers);
       
       setUsers(availableUsers);
       setLikedUsers(liked);
@@ -114,6 +116,16 @@ export default function People() {
       setLoading(false);
     }
   };
+
+  // Fisher-Yates shuffle
+  function shuffleArray<T>(array: T[]): T[] {
+    const arr = [...array];
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
 
   // Fetch users on mount and when session changes
   useEffect(() => {
