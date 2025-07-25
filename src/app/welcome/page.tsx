@@ -189,6 +189,7 @@ export default function WelcomePage() {
 	const [dob, setDob] = useState("");
 	const [bio, setBio] = useState("");
 	const [profileCompleted, setProfileCompleted] = useState(false); // New state to track completion
+	const [isCheckingCompletion, setIsCheckingCompletion] = useState(false);
 	const fileInputRef = useRef<HTMLInputElement>(null);
 
 	// Add effect to fetch the user's profile photo when the component mounts
@@ -222,6 +223,40 @@ export default function WelcomePage() {
 			}
 		} catch (error) {
 			console.error("Error fetching user profile:", error);
+		}
+	};
+
+	// Check profile completion when component mounts
+	useEffect(() => {
+		if (session?.user?.email) {
+			checkProfileCompletion();
+		}
+	}, [session?.user?.email]);
+
+	// Function to check profile completion
+	const checkProfileCompletion = async () => {
+		if (!session?.user?.email) return;
+		
+		setIsCheckingCompletion(true);
+		try {
+			const response = await fetch("/api/check-profile-completion", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ email: session.user.email }),
+			});
+
+			const data = await response.json();
+
+			if (response.ok && data.isComplete) {
+				// If profile is complete, redirect to main page
+				router.push("/mainpage");
+			} else {
+				// If profile is incomplete, allow access to welcome page
+				setIsCheckingCompletion(false);
+			}
+		} catch (error) {
+			console.error("Error checking profile completion:", error);
+			setIsCheckingCompletion(false);
 		}
 	};
 
@@ -360,6 +395,43 @@ export default function WelcomePage() {
 	const isLastQuestion = currentQuestion === QUESTIONS.length - 1;
 	const isPhotoQuestion = currentQ.isPhotoUpload;
 	const canProceed = isPhotoQuestion ? !!profilePhoto : answers[currentQ.id];
+
+	// Return loading state while checking completion
+	if (isCheckingCompletion) {
+		return (
+			<div
+				style={{
+					display: "flex",
+					justifyContent: "center",
+					alignItems: "center",
+					height: "100vh",
+					background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+					color: "#fff",
+				}}
+			>
+				<div style={{ textAlign: "center" }}>
+					<div
+						style={{
+							width: "60px",
+							height: "60px",
+							border: "4px solid rgba(255,255,255,0.3)",
+							borderTop: "4px solid white",
+							borderRadius: "50%",
+							animation: "spin 1s linear infinite",
+							margin: "0 auto 20px auto",
+						}}
+					></div>
+					<p style={{ fontSize: "18px", fontWeight: "500" }}>Checking your profile...</p>
+					<style jsx>{`
+						@keyframes spin {
+							0% { transform: rotate(0deg); }
+							100% { transform: rotate(360deg); }
+						}
+					`}</style>
+				</div>
+			</div>
+		);
+	}
 
 	// Render the congratulations screen if profile is completed
 	if (profileCompleted) {
