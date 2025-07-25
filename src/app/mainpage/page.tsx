@@ -241,20 +241,6 @@ export default function MainPage() {
           }}
         >
           {/* Replace with your actual logo */}
-          <div
-            style={{
-              width: "32px",
-              height: "32px",
-              borderRadius: "50%",
-              background: "#0070f3",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontWeight: "bold",
-            }}
-          >
-            D
-          </div>
           <span style={{ fontWeight: "700", fontSize: "20px" }}>Destyn</span>
         </div>
 
