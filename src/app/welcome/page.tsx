@@ -188,6 +188,7 @@ export default function WelcomePage() {
 	const [preference, setPreference] = useState("");
 	const [dob, setDob] = useState("");
 	const [bio, setBio] = useState("");
+	const [profileCompleted, setProfileCompleted] = useState(false); // New state to track completion
 	const fileInputRef = useRef<HTMLInputElement>(null);
 
 	// Add effect to fetch the user's profile photo when the component mounts
@@ -316,32 +317,130 @@ export default function WelcomePage() {
 	const handleSubmit = async () => {
 		setIsSubmitting(true);
 		try {
+			// Store all data in the answers object
+			const updatedAnswers = {
+				...answers,
+				// Make sure q0 has the profile photo
+				q0: profilePhoto,
+				// Make sure q1 has the bio
+				q1: bio,
+				// Make sure q2 has the interests
+				q2: selectedInterests,
+				// Make sure q3 has gender, preference, and birthdate
+				q3: {
+					gender,
+					preference,
+					dob
+				}
+			};
+
 			await fetch("/api/update-profile", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({
 					email: session.user.email,
 					name: session.user.name,
-					bio,
-					interests: selectedInterests,
-					profilePhoto,
-					gender,
-					preference,
-					birthdate: dob,
-					answers,
+					answers: updatedAnswers,
 				}),
 			});
-			router.push("/mainpage");
+			
+			setProfileCompleted(true);
+			setIsSubmitting(false);
 		} catch (error) {
 			console.error("Error updating profile:", error);
 			setIsSubmitting(false);
 		}
 	};
 
+	const goToMainPage = () => {
+		router.push("/mainpage");
+	};
+
 	const currentQ = QUESTIONS[currentQuestion];
 	const isLastQuestion = currentQuestion === QUESTIONS.length - 1;
 	const isPhotoQuestion = currentQ.isPhotoUpload;
 	const canProceed = isPhotoQuestion ? !!profilePhoto : answers[currentQ.id];
+
+	// Render the congratulations screen if profile is completed
+	if (profileCompleted) {
+		return (
+			<div
+				style={{
+					minHeight: "100vh",
+					background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+					display: "flex",
+					alignItems: "center",
+					justifyContent: "center",
+					padding: "10px",
+				}}
+			>
+				<div
+					style={{
+						background: "#fff",
+						borderRadius: "20px",
+						padding: "40px 30px",
+						maxWidth: "600px",
+						width: "100%",
+						boxShadow: "0 20px 60px rgba(0,0,0,0.1)",
+						margin: "20px 20px",
+						textAlign: "center",
+					}}
+				>
+					<div
+						style={{
+							fontSize: "64px",
+							marginBottom: "20px",
+						}}
+					>
+						🎉
+					</div>
+					<h1
+						style={{
+							fontSize: "28px",
+							fontWeight: "700",
+							color: "#333",
+							marginBottom: "16px",
+						}}
+					>
+						Congratulations!
+					</h1>
+					<p
+						style={{
+							fontSize: "16px",
+							color: "#666",
+							lineHeight: "1.6",
+							marginBottom: "30px",
+						}}
+					>
+						Your profile has been successfully created. You're all set to connect with amazing people!
+					</p>
+					<button
+						onClick={goToMainPage}
+						style={{
+							padding: "16px 40px",
+							background: "linear-gradient(90deg, #667eea 0%, #764ba2 100%)",
+							color: "#fff",
+							border: "none",
+							borderRadius: "10px",
+							cursor: "pointer",
+							fontSize: "18px",
+							fontWeight: "600",
+							boxShadow: "0 4px 14px rgba(102, 126, 234, 0.4)",
+							transition: "transform 0.2s ease",
+						}}
+						onMouseEnter={(e) => {
+							(e.target as HTMLButtonElement).style.transform = "translateY(-2px)";
+						}}
+						onMouseLeave={(e) => {
+							(e.target as HTMLButtonElement).style.transform = "translateY(0)";
+						}}
+					>
+						Start Exploring Destyn
+					</button>
+				</div>
+			</div>
+		);
+	}
 
 	return (
 		<div
