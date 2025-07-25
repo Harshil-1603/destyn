@@ -397,7 +397,7 @@ export default function Feed() {
         background: "#000",
         height: "calc(100vh - 60px)",
         overflowY: "auto",
-        borderRadius: 16,
+        borderRadius: 0, // Changed from 16 to 0 to remove rounded corners
         boxShadow: "0 8px 32px rgba(0,0,0,0.3)",
       }}
     >
@@ -781,7 +781,7 @@ export default function Feed() {
                       value={commentText}
                       onChange={(e) => setCommentText(e.target.value)}
                       placeholder="Write a comment..."
-                      maxLength={200}
+                      maxLength={400}
                     />
                     <div
                       style={{
