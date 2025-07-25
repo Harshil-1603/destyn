@@ -124,8 +124,17 @@ export default function Feed() {
 
   // Initial fetch
   useEffect(() => {
+    if (!session?.user?.email) return;
     setLoading(true);
-    fetch(`/api/get-confessions?skip=0&limit=${PAGE_SIZE}`)
+    fetch("/api/get-confessions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: session.user.email,
+        skip: 0,
+        limit: PAGE_SIZE,
+      }),
+    })
       .then((res) => res.json())
       .then((data) => {
         setConfessions(data.confessions || []);
@@ -133,7 +142,7 @@ export default function Feed() {
         setHasMore((data.confessions?.length || 0) < (data.total || 0));
         setLoading(false);
       });
-  }, []);
+  }, [session?.user?.email]);
 
   // Infinite scroll
   useEffect(() => {
@@ -150,10 +159,18 @@ export default function Feed() {
   }, [confessions, loading, fetchingMore, hasMore]);
 
   const loadMore = async () => {
-    if (fetchingMore || !hasMore) return;
+    if (fetchingMore || !hasMore || !session?.user?.email) return;
     setFetchingMore(true);
     const skip = confessions.length;
-    const res = await fetch(`/api/get-confessions?skip=${skip}&limit=${PAGE_SIZE}`);
+    const res = await fetch("/api/get-confessions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: session.user.email,
+        skip,
+        limit: PAGE_SIZE,
+      }),
+    });
     const data = await res.json();
     setConfessions((prev) => [...prev, ...(data.confessions || [])]);
     setHasMore((skip + (data.confessions?.length || 0)) < (data.total || 0));
