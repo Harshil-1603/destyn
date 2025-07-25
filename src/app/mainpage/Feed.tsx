@@ -360,7 +360,7 @@ export default function Feed() {
         }
         
         .time-text {
-          font-size: 9px !important;
+          font-size: 9px !important;,
         }
         
         .action-button {
@@ -427,38 +427,50 @@ export default function Feed() {
         <button
           style={{
             position: "absolute",
-            top: "15px", // Fixed position from the top instead of 50%
+            top: "50%",
             right: "12px",
-            width: "32px",
-            height: "32px",
+            transform: "translateY(-50%)",
+            width: "38px",
+            height: "38px",
             borderRadius: "50%",
-            background: "#667eea",
+            background: newConfession.trim() ? "linear-gradient(135deg, #25D366, #128C7E)" : "#666", // WhatsApp gradient when active
             color: "white",
             border: "none",
-            cursor: "pointer",
-            opacity: loading ? 0.6 : 1,
-            transition: "all 0.2s",
+            cursor: newConfession.trim() ? "pointer" : "not-allowed",
+            opacity: loading ? 0.7 : 1,
+            transition: "all 0.2s ease",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
             padding: 0,
+            boxShadow: newConfession.trim() ? "0 2px 8px rgba(0, 0, 0, 0.2)" : "none",
           }}
           onClick={handleSubmitConfession}
           disabled={loading || !newConfession.trim()}
         >
           {loading ? (
-            <span style={{ fontSize: "12px" }}>...</span>
-          ) : (
+            // Loading spinner
             <div
               style={{
-                width: 0,
-                height: 0,
-                borderTop: "6px solid transparent",
-                borderBottom: "6px solid transparent",
-                borderLeft: "10px solid white",
-                marginLeft: "3px",
+                width: "18px",
+                height: "18px",
+                border: "2px solid rgba(255,255,255,0.3)",
+                borderTop: "2px solid white",
+                borderRadius: "50%",
+                animation: "spin 1s linear infinite",
               }}
             />
+          ) : (
+            // Fixed WhatsApp-style send icon (microphone/paper plane)
+            <svg 
+              xmlns="http://www.w3.org/2000/svg" 
+              width="20" 
+              height="20" 
+              viewBox="0 0 24 24" 
+              fill="white"
+            >
+              <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+            </svg>
           )}
         </button>
       </div>
