@@ -1,10 +1,39 @@
 "use client";
 
-import { signIn, useSession } from "next-auth/react";
+import { signIn, useSession, signOut } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { FcGoogle } from "react-icons/fc";
 import TypographyImage from "../assets/Typography.png"; // Import the image
+
+// Function to clear all authentication-related cookies
+const clearAuthCookies = async () => {
+  // Clear client-side cookies
+  document.cookie = "next-auth.session-token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+  document.cookie = "next-auth.csrf-token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+  document.cookie = "next-auth.callback-url=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+  document.cookie = "__Secure-next-auth.session-token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; secure;";
+  document.cookie = "__Secure-next-auth.csrf-token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; secure;";
+  document.cookie = "__Secure-next-auth.callback-url=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; secure;";
+  
+  // Clear any other potential auth cookies
+  document.cookie = "auth-token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+  document.cookie = "user-session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+  
+  // Also call server-side endpoint for more secure cookie clearing
+  try {
+    await fetch('/api/clear-cookies', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+  } catch (error) {
+    console.error('Error calling server-side cookie clearing:', error);
+  }
+  
+  console.log('All authentication cookies cleared');
+};
 
 export default function LoginPage() {
   const { data: session, status } = useSession();
@@ -26,13 +55,42 @@ export default function LoginPage() {
     const error = searchParams.get('error');
     if (error === 'AccessDenied') {
       setError('Access denied. Only users with authorized college email domains can access this application.');
+      // Clear all authentication cookies when access is denied
+      clearAuthCookies().then(() => {
+        // Force sign out to clear any existing session
+        signOut({ redirect: false });
+      });
     } else if (error) {
       setError('Authentication failed. Please try again.');
+      // Clear cookies for any authentication error
+      clearAuthCookies().then(() => {
+        signOut({ redirect: false });
+      });
     }
   }, [searchParams]);
 
   useEffect(() => {
+    // Only redirect if user is authenticated AND has a valid session
     if (status === "authenticated" && session?.user?.email) {
+      // Double-check the email domain before redirecting
+      const emailDomain = session.user.email.split('@')[1]?.toLowerCase();
+      const ALLOWED_DOMAINS = [
+        'iitj.ac.in',
+        'nlujodhpur.ac.in',
+        'mbm.ac.in',
+        'nift.ac.in',
+        'jietjodhpur.ac.in',
+        'aiimsjodhpur.edu.in'
+      ];
+      
+      if (!ALLOWED_DOMAINS.includes(emailDomain)) {
+        // If somehow a user with unauthorized domain got authenticated, sign them out
+        console.log('Unauthorized domain detected in session, signing out');
+        signOut({ redirect: false });
+        setError('Access denied. Only users with authorized college email domains can access this application.');
+        return;
+      }
+      
       setIsRedirecting(true); // Set redirecting state immediately
       // Check if user exists in DB
       fetch("/api/user-exists", {
@@ -59,12 +117,24 @@ export default function LoginPage() {
   const handleSignIn = async () => {
     setIsSigningIn(true);
     setError(null); // Clear any previous errors
+    
+    // Force clear any existing session before signing in
+    try {
+      await fetch('/api/force-signout', { method: 'POST' });
+      await signOut({ redirect: false });
+      await clearAuthCookies();
+    } catch (error) {
+      console.error('Error clearing session:', error);
+    }
+    
     try {
       await signIn("google");
     } catch (error) {
       console.error("Sign in error:", error);
       setIsSigningIn(false);
       setError('Authentication failed. Please try again.');
+      // Clear cookies on sign-in error
+      clearAuthCookies();
     }
   };
 
@@ -189,6 +259,9 @@ export default function LoginPage() {
             <p className="text-red-200 text-sm font-medium">{error}</p>
             <p className="text-red-300 text-xs mt-2">
               Allowed domains: iitj.ac.in, nlujodhpur.ac.in, mbm.ac.in, nift.ac.in, jietjodhpur.ac.in, aiimsjodhpur.edu.in
+            </p>
+            <p className="text-red-300 text-xs mt-1">
+              Your session has been cleared for security. You can try again with a different email.
             </p>
           </div>
         )}
