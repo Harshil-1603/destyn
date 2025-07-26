@@ -39,16 +39,16 @@ const handler = NextAuth({
       return session;
     },
     async redirect({ url, baseUrl }) {
-      // Allows relative callback URLs
+      // After Google authentication, redirect to /welcome
+      if (url.includes('/api/auth/callback/google')) {
+        return `${baseUrl}/welcome`;
+      }
+      
+      // Default redirect behavior for other cases
       if (url.startsWith("/")) return `${baseUrl}${url}`;
-      // Allows callback URLs on the same origin
       else if (new URL(url).origin === baseUrl) return url;
       return baseUrl;
     },
-  },
-  pages: {
-    signIn: '/welcome',
-    error: '/welcome', // Redirect to welcome page on error
   },
   debug: process.env.NODE_ENV === 'development',
 });
