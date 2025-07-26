@@ -99,12 +99,17 @@ export default function People() {
       const likedData = await likedResponse.json();
       
       const allUsers = usersData.users || [];
-      const likedUsers = likedData.likedUsers || [];
+      const likedUsers = likedData.liked || [];
+      
+      console.log('Debug - All users:', allUsers.length);
+      console.log('Debug - Liked users:', likedUsers);
       
       // Filter out already liked users and current user
       let availableUsers = allUsers.filter((user: User) => 
         !likedUsers.includes(user.email) && user.email !== session.user.email
       );
+      
+      console.log('Debug - Available users after filtering:', availableUsers.length);
       
       // Apply batch-based filtering rules
       const currentUserEmail = session.user.email.toLowerCase();
@@ -150,7 +155,7 @@ export default function People() {
       availableUsers = shuffleArray(availableUsers);
       
       setUsers(availableUsers);
-      setLikedUsers(likedData.likedUsers || []);
+      setLikedUsers(likedData.liked || []);
       setCurrent(0);
     } catch (error) {
       console.error("Error fetching users:", error);
@@ -281,9 +286,14 @@ export default function People() {
       // Update liked users list locally
       setLikedUsers(prev => [...prev, user.email]);
       
+      console.log('Debug - Liked user:', user.email);
+      console.log('Debug - Updated liked users list:', [...likedUsers, user.email]);
+      
       // Remove this user from the list
       const newUsers = users.filter((_, index) => index !== current);
       setUsers(newUsers);
+      
+      console.log('Debug - Users after removal:', newUsers.length);
       
       // Adjust current index if needed
       if (current >= newUsers.length && newUsers.length > 0) {
