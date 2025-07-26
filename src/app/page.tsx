@@ -1,7 +1,7 @@
 "use client";
 
 import { signIn, useSession, signOut } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { FcGoogle } from "react-icons/fc";
 import TypographyImage from "../assets/Typography.png"; // Import the image
@@ -35,7 +35,8 @@ const clearAuthCookies = async () => {
   console.log('All authentication cookies cleared');
 };
 
-export default function LoginPage() {
+// Separate component that uses useSearchParams
+function LoginPageContent() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -280,5 +281,35 @@ export default function LoginPage() {
         </button>
       </div>
     </div>
+  );
+}
+
+// Main component with Suspense boundary
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="relative min-h-screen w-full overflow-hidden bg-gradient-to-br from-[#8A2BE2] via-[#6A1B9A] to-[#4A148C] flex flex-col items-center justify-center p-4 font-sans">
+        <div className="z-10 flex flex-col items-center justify-center text-white text-center flex-grow">
+          <div className="flex items-center mb-8 -mt-50 md:mt-0">
+            <div>
+              <img
+                src={TypographyImage.src}
+                alt="Destyn Logo"
+                className="w-48 md:w-64 lg:w-72 object-contain"
+              />
+              <p className="text-xl md:text-2xl font-light tracking-widest">
+                Dil se Date tak...
+              </p>
+            </div>
+          </div>
+          <div className="mt-8">
+            <div className="w-8 h-8 border-4 border-white border-t-transparent rounded-full animate-spin mx-auto"></div>
+            <p className="mt-4 text-white">Loading...</p>
+          </div>
+        </div>
+      </div>
+    }>
+      <LoginPageContent />
+    </Suspense>
   );
 }
