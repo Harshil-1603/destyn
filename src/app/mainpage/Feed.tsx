@@ -274,7 +274,6 @@ export default function Feed() {
           confessionId,
           comment: commentText.trim(),
           userEmail: session.user.email,
-          userName: session.user.name || session.user.email,
         }),
       });
 
