@@ -259,7 +259,7 @@ export default function People() {
             ((e.target as HTMLButtonElement).style.background = "#23232b")
           }
         >
-          🔄 Refresh
+           Refresh
         </button>
       </div>
     );
@@ -583,24 +583,25 @@ export default function People() {
           onClick={fetchUsers}
           style={{
             padding: "8px 16px",
-            background: "transparent",
-            color: "#666",
+            background: "#fff", // Changed from transparent to white
+            color: "#333", // Changed from #666 to darker for better contrast
             border: "1px solid #333",
             borderRadius: 6,
-            fontSize: 12,
+            fontSize: "14px", // Increased from 12px
+            fontWeight: "600", // Added bold
             cursor: "pointer",
             transition: "all 0.2s"
           }}
           onMouseEnter={(e) => {
-            (e.target as HTMLButtonElement).style.color = "#fff";
-            (e.target as HTMLButtonElement).style.borderColor = "#666";
+            (e.target as HTMLButtonElement).style.background = "#f0f0f0"; // Hover effect
+            (e.target as HTMLButtonElement).style.color = "#111";
           }}
           onMouseLeave={(e) => {
-            (e.target as HTMLButtonElement).style.color = "#666";
-            (e.target as HTMLButtonElement).style.borderColor = "#333";
+            (e.target as HTMLButtonElement).style.background = "#fff";
+            (e.target as HTMLButtonElement).style.color = "#333";
           }}
         >
-          🔄 Check for new people
+           Check for new people
         </button>
       </div>
     </div>
