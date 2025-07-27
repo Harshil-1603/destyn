@@ -662,10 +662,10 @@ export default function Chat() {
                         textAlign:
                           msg.sender === session?.user?.email ? "right" : "left",
                         maxWidth: isMobile ? "85%" : "70%",
-                        margin:
-                          msg.sender === session?.user?.email
-                            ? "0 0 0 auto"
-                            : "0 auto 0 0",
+                        marginLeft:
+                          msg.sender === session?.user?.email ? "auto" : (isMobile ? 8 : 20),
+                        marginRight:
+                          msg.sender === session?.user?.email ? 0 : "auto",
                       }}
                     >
                       <div
