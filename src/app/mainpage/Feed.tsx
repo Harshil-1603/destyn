@@ -604,7 +604,7 @@ export default function Feed() {
       <div style={{ 
         display: "flex", 
         flexDirection: "column", 
-        gap: 78,
+        gap: 39,
         paddingBottom: isMobile ? 120 : 80, // Less padding on desktop, more on mobile for nav
       }}>
         {confessions.length === 0 && !loading ? (
