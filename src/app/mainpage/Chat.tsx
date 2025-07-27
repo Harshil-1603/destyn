@@ -471,7 +471,9 @@ export default function Chat() {
                       }}
                     >
                       {lastMessages[user.email].sender === session?.user?.email ? 'You: ' : ''}
-                      {lastMessages[user.email].message}
+                      {lastMessages[user.email].message.length > 12
+                        ? lastMessages[user.email].message.slice(0, 12) + '...'
+                        : lastMessages[user.email].message}
                     </div>
                   )}
                 </div>
