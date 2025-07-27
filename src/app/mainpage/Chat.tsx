@@ -503,11 +503,15 @@ export default function Chat() {
                   <div>
                     <div
                       style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 10,
                         fontWeight: "600",
                         fontSize: "16px",
                         marginBottom: 4,
                         cursor: "pointer",
-                        textDecoration: "underline",
+                        // Remove underline
+                        textDecoration: "none",
                       }}
                       onClick={() => {
                         if (selected?.email) {
@@ -515,7 +519,38 @@ export default function Chat() {
                         }
                       }}
                     >
-                      💬 {selected.name}
+                      {/* Profile Photo */}
+                      {selectedProfile?.profilePhoto ? (
+                        <img
+                          src={selectedProfile.profilePhoto}
+                          alt={`${selected.name || selected.email}'s profile`}
+                          style={{
+                            width: 32,
+                            height: 32,
+                            borderRadius: '50%',
+                            objectFit: 'cover',
+                            background: '#1a1a1a',
+                            border: '1px solid #333',
+                            flexShrink: 0,
+                          }}
+                        />
+                      ) : (
+                        <span style={{
+                          width: 32,
+                          height: 32,
+                          borderRadius: '50%',
+                          background: '#1a1a1a',
+                          border: '1px solid #333',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: 18,
+                          color: '#666',
+                          flexShrink: 0,
+                        }}>👤</span>
+                      )}
+                      {/* User Name */}
+                      <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{selected.name}</span>
                     </div>
                     {/* Show if this is a new match */}
                     {newMatches.find(match => match.email === selected.email) && (
