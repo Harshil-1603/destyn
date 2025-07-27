@@ -638,6 +638,7 @@ export default function Feed() {
                   >
                     {confession.confession}
                   </p>
+                  
                   <div
                     style={{
                       display: "flex",
