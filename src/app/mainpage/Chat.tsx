@@ -31,6 +31,7 @@ export default function Chat() {
   const socketRef = useRef<Socket | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const sentMessagesRef = useRef<Set<string>>(new Set());
+  const [lastMessages, setLastMessages] = useState<Record<string, any>>({}); // email -> last message
 
   const router = useRouter();
 
@@ -177,6 +178,31 @@ export default function Chat() {
         setLoading(false);
       });
   }, [selected, session?.user?.email]);
+
+  // Fetch last message for each active chat
+  useEffect(() => {
+    if (!session?.user?.email || activeChats.length === 0) return;
+    const fetchLastMessages = async () => {
+      const results: Record<string, any> = {};
+      await Promise.all(
+        activeChats.map(async (user: any) => {
+          const usersSorted = [session.user.email, user.email].sort();
+          const room = usersSorted.join("--");
+          const res = await fetch("/api/get-chat-history", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ userEmail: session.user.email, otherUserEmail: user.email, limit: 1, sort: -1 }),
+          });
+          const data = await res.json();
+          if (data.messages && data.messages.length > 0) {
+            results[user.email] = data.messages[data.messages.length - 1];
+          }
+        })
+      );
+      setLastMessages(results);
+    };
+    fetchLastMessages();
+  }, [activeChats, session?.user?.email]);
 
   const sendMessage = async () => {
     if (!input.trim() || !session?.user?.email || !selected) return;
@@ -430,6 +456,22 @@ export default function Chat() {
                       }}
                     >
                       ✨ New match!
+                    </div>
+                  )}
+                  {activeTab === 'chats' && lastMessages[user.email] && (
+                    <div
+                      style={{
+                        fontSize: "12px",
+                        color: '#ccc',
+                        marginTop: 2,
+                        fontWeight:
+                          lastMessages[user.email].sender !== session?.user?.email && !lastMessages[user.email].read
+                            ? 'bold'
+                            : 'normal',
+                      }}
+                    >
+                      {lastMessages[user.email].sender === session?.user?.email ? 'You: ' : ''}
+                      {lastMessages[user.email].message}
                     </div>
                   )}
                 </div>
