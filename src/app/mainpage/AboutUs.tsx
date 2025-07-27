@@ -228,7 +228,7 @@ export default function AboutUs({ onClose }: { onClose: () => void }) {
               8. Get In Touch
             </h2>
             <p>
-               Give feedback and ideas on our feedback section.
+               Give feedback and ideas on our feedback section. You can also reach us directly at: <a href="mailto:destyn4sup@gmail.com" style={{ color: "#667eea", textDecoration: "none" }}>destyn4sup@gmail.com</a>
             </p>
           </section>
 
