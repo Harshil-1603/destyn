@@ -666,8 +666,6 @@ export default function Chat() {
                           msg.sender === session?.user?.email
                             ? "0 0 0 auto"
                             : "0 auto 0 0",
-                        marginLeft:
-                          msg.sender !== session?.user?.email ? (isMobile ? 8 : 20) : undefined,
                       }}
                     >
                       <div
