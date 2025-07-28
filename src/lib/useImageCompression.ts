@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { compressImage, compressImages, CompressionOptions, CompressedImage } from './imageCompression';
+import { compressImage, compressImages, CompressionOptions, CompressedImage, ImageCompressor } from './imageCompression';
 
 export interface UseImageCompressionOptions {
   compressionOptions?: CompressionOptions;
@@ -52,7 +52,7 @@ export const useImageCompression = (options: UseImageCompressionOptions = {}) =>
       setCompressionInfo({
         originalTotalSize: result.originalSize,
         compressedTotalSize: result.compressedSize,
-        totalSaved: result.originalSize - result.compressedSize,
+        totalSaved: ImageCompressor.formatFileSize(result.originalSize - result.compressedSize),
         averageRatio: `${(result.compressionRatio * 100).toFixed(1)}%`
       });
 
@@ -108,7 +108,7 @@ export const useImageCompression = (options: UseImageCompressionOptions = {}) =>
         setCompressionInfo({
           originalTotalSize,
           compressedTotalSize,
-          totalSaved,
+          totalSaved: ImageCompressor.formatFileSize(totalSaved),
           averageRatio: `${averageRatio}%`
         });
       }
