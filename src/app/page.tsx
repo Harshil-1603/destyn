@@ -636,20 +636,10 @@ function LoginPageContent() {
                 <div className="text-xl font-bold mb-2 flex items-center">
                   <img src="/Typography_white.png" alt="Destyn Logo" className="h-8 w-auto object-contain" style={{filter: 'drop-shadow(0 1px 4px #34398c)'}} />
                 </div>
-                <div className="text-gray-400">Copyright © 2025 All rights reserved</div>
+                <div className="text-gray-400 mb-2">Connecting hearts, building memories</div>
+                <div className="text-gray-400">Copyright © 2025 Destyn. All rights reserved</div>
               </div>
               <div className="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-6">
-                <div className="flex space-x-6">
-                  {sectionIds.map((id) => (
-                    <a
-                      key={id}
-                      href={`#${id}`}
-                      className={`text-white hover:text-gray-300 transition-colors scroll-smooth ${activeSection === id ? "font-bold text-blue-400" : ""}`}
-                    >
-                      {id.charAt(0).toUpperCase() + id.slice(1)}
-                    </a>
-                  ))}
-                </div>
                 <div className="flex space-x-4 mt-4 md:mt-0">
                   {/* Instagram */}
                   <a
