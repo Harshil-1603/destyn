@@ -469,9 +469,9 @@ function LoginPageContent() {
           />
           {/* Left: Text */}
           <div className="md:w-1/2 w-full flex flex-col items-start justify-center px-4 md:px-16 mb-10 md:mb-0 relative z-10">
-            <h2 className="font-serif text-5xl md:text-6xl font-bold mb-6 leading-tight text-[#34398c]">Discover<br/>Connections</h2>
-            <div className="w-24 h-1 bg-[#34398c] mb-8"></div>
-            <p className="font-serif text-xl md:text-2xl leading-relaxed text-[#34398c]">
+            <h2 className="font-serif text-5xl md:text-6xl font-bold mb-6 leading-tight text-white" style={{textShadow: '0 2px 8px rgba(0,0,0,0.3)'}}>Discover<br/>Connections</h2>
+            <div className="w-24 h-1 bg-white mb-8" style={{boxShadow: '0 2px 4px rgba(0,0,0,0.2)'}}></div>
+            <p className="font-serif text-xl md:text-2xl leading-relaxed text-gray-100" style={{textShadow: '0 1px 4px rgba(0,0,0,0.2)'}}>
               We believe every student deserves emotional support and someone to love. Build memories in your college because grades won't be remembered. Stay connected to your college community and make connections.
             </p>
           </div>
