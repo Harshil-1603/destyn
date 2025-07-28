@@ -48,9 +48,9 @@ function ReactionButton({
           background: hasReacted ? "#0070f3" : "#222",
           color: hasReacted ? "#fff" : "#ccc",
           border: hasReacted ? "2px solid #0070f3" : "1px solid #333",
-          borderRadius: isMobile ? 12 : 15,
-          padding: isMobile ? "3px 7.5px" : "4.5px 10.5px",
-          fontSize: isMobile ? 10.5 : 13.5,
+          borderRadius: isMobile ? 16 : 15,
+          padding: isMobile ? "4px 10px" : "4.5px 10.5px",
+          fontSize: isMobile ? 14 : 13.5,
           fontWeight: 600,
           cursor: disabled ? "not-allowed" : "pointer",
           boxShadow: hasReacted ? "0 2px 8px #0070f355" : "none",
@@ -69,9 +69,9 @@ function ReactionButton({
         onFocus={() => setShowTooltip(true)}
         onBlur={() => setShowTooltip(false)}
       >
-        <span style={{ fontSize: isMobile ? 10.5 : 13.5, display: 'flex', alignItems: 'center' }}>{emoji}</span>
+        <span style={{ fontSize: isMobile ? 14 : 13.5, display: 'flex', alignItems: 'center' }}>{emoji}</span>
         {count > 0 && (
-          <span style={{ fontSize: isMobile ? 8.25 : 10.5, display: 'flex', alignItems: 'center' }}>{count}</span>
+          <span style={{ fontSize: isMobile ? 11 : 10.5, display: 'flex', alignItems: 'center' }}>{count}</span>
         )}
       </button>
       {showTooltip && users.length > 0 && (
