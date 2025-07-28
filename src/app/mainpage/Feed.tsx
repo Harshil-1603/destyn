@@ -395,7 +395,7 @@ export default function Feed() {
         width: 100%;
         min-height: 38px;
         max-height: 150px;
-        padding: 0 16px;
+        padding: 8px 16px;
         border-radius: 24px;
         border: 1px solid rgba(51, 51, 51, 0.7);
         background: rgba(17, 17, 17, 0.7);
@@ -408,16 +408,12 @@ export default function Feed() {
         overflow-y: auto;
         box-sizing: border-box;
         transition: height 0.2s ease;
-        display: flex;
-        align-items: center;
+        line-height: 1.4;
       }
       .gossip-textarea::placeholder {
         color: #aaa;
         opacity: 1;
-        display: flex;
-        align-items: center;
-        line-height: 38px;
-        height: 38px;
+        line-height: 1.4;
       }
       
       @media (max-width: 600px) {
@@ -455,12 +451,11 @@ export default function Feed() {
         }
         
         .gossip-textarea {
-          padding: 0 12px !important;
+          padding: 6px 12px !important;
           font-size: 13px !important;
         }
         .gossip-textarea::placeholder {
-          line-height: 38px;
-          height: 38px;
+          line-height: 1.4;
         }
       }
     `;
