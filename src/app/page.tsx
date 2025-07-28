@@ -107,12 +107,30 @@ function LoginPageContent() {
   const [modal, setModal] = useState<null | "faq" | "privacy" | "guidelines" | "aboutus">(null);
   const sectionIds = ["about", "services", "faq"];
   const activeSection = useScrollSpy(sectionIds);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (status !== "loading") {
       setHasInitialized(true);
     }
   }, [status]);
+
+  // Handle clicks outside dropdown
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setMoreOpen(false);
+      }
+    };
+
+    if (moreOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [moreOpen]);
 
   useEffect(() => {
     // Check for authentication error in URL parameters
@@ -338,7 +356,7 @@ function LoginPageContent() {
                         activeSection === id ? "font-bold text-blue-400" : "hover:text-blue-300"
                       }`}
                     >
-                      <span>{id.charAt(0).toUpperCase() + id.slice(1)}</span>
+                      <span>{id === "faq" ? "FAQ" : id.charAt(0).toUpperCase() + id.slice(1)}</span>
                       {/* Animated underline */}
                       <motion.span
                         layoutId="nav-underline"
@@ -352,7 +370,7 @@ function LoginPageContent() {
                   ))}
                 </div>
                 {/* Hamburger/More menu */}
-                <div className="ml-4 relative">
+                <div className="ml-4 relative" ref={dropdownRef}>
                   <button
                     aria-label="More options"
                     className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-gray-800 focus:outline-none"
