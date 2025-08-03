@@ -521,9 +521,9 @@ export default function People() {
           {/* About/Bio section always visible */}
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 4 }}>
             <div style={{ fontWeight: 700, fontSize: 18 }}>About</div>
-            {user.answers?.q3?.dob && (
+            {user.answers?.birthdate && (
               <ZodiacTag 
-                birthdate={user.answers.q3.dob} 
+                birthdate={user.answers.birthdate} 
                 size="small"
               />
             )}
